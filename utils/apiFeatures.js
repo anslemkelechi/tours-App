@@ -19,6 +19,7 @@ class APIFeatures {
 
   sort() {
     if (this.queryString.sort) {
+      //we do this because the correct query for multiple values in a parameter is //sort('price ratingAverage')
       const sortBy = this.queryString.sort.split(',').join(' ');
       this.query = this.query.sort(sortBy);
     } else {
