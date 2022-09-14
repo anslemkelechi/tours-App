@@ -15,6 +15,10 @@ const handleValidationErrorDB = (err) => {
   const message = `Invalid field data ${errors.join('. ')} Critical Error`;
   return new AppError(message, 400);
 };
+const handleJWTError = (err) =>
+  new AppError('Invalid token. Please login again', 401);
+const handleJWTExpiredError = (err) =>
+  new AppError('Your token is expired, Please login again', 401);
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -53,6 +57,9 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleDuplicateKeyDB(error);
     if (error._message === 'Validation failed')
       error = handleValidationErrorDB(error);
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(error);
+    if (error.name === 'TokenExpiredError')
+      error = handleJWTExpiredError(error);
     sendErrorProd(error, res);
   }
 };
